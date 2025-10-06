@@ -1,27 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PegawaiController;
 
-use App\Http\Controllers\MatakuliahController;
+Route::get('/pegawai', [PegawaiController::class, 'index']);
+Route::post('/pegawai', [PegawaiController::class, 'show']);
 
-Route::get('/', function () {
-    return ('Selamat datang di website kampus pcr');
+
+Route::get('/dashboard', function () {
+    if (!session('username')) {
+        return redirect('/auth')->withErrors(['Silakan login dulu!']);
+    }
+    return view('dashboard');
+
 });
-
-Route::get('/mahasiswa', function () {
-    return ('halo mahasiswa');
-});
-
-Route::get('/nama/maya', function ($maya) {
-    return ('nama saya : '.$maya);
-});
-
-Route::get('/nim/maya', function ($maya='') {
-    return ('nim saya: '.$maya);
-});
-
-Route::get('/about', function () {
-    return view('halaman-about');
-});
-
-Route::get('/matakuliah/show', [MatakuliahController::class, 'show']);
