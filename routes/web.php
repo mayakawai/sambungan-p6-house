@@ -1,16 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\DashboardController;
 
-Route::get('/pegawai', [PegawaiController::class, 'index']);
-Route::post('/pegawai', [PegawaiController::class, 'show']);
-
-
-Route::get('/dashboard', function () {
-    if (!session('username')) {
-        return redirect('/auth')->withErrors(['Silakan login dulu!']);
-    }
-    return view('dashboard');
-
-});
+Route::get('/dashboard', [DashboardController::class, 'index']);
