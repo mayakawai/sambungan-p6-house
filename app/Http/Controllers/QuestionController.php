@@ -1,5 +1,5 @@
-
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -11,7 +11,7 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        //
+      //
     }
 
     /**
@@ -27,31 +27,31 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
-    $request->validate([
-        'nama'       => 'required|min:3|max:50',
-        'email'      => 'required|email',
-        'pertanyaan' => 'required|min:10|max:300',
-    ], [
-        'nama.required'       => "Nama tidak boleh kosong",
-        'email.required'      => "Email tidak boleh kosong",
-        'pertanyaan.required' => "Pertanyaan tidak boleh kosong",
-    ]);
+        $request-> validate ([
+            'nama' => 'required|max:10|min:5',
+            'email' => ['required','email'],
+            'pertanyaan' => 'required|max:300|min:10',
 
-    $nama       = $request->input('nama');
-    $email      = $request->input('email');
-    $pertanyaan = $request->input('pertanyaan');
+        ],[
+            'nama.required' => 'Nama tidak boleh kosong',
+            'email.required' => 'Email tidaK boleh kosong',
+            'email.email' => 'Email tidak valid',
+            'pertanyaan.required' => 'Isi dong pertanyaannya!',
+            'pertanyaan.min' => 'Pertanyaan minimal harus 10 karakter'
+        ]);
 
-    // Buat pesan seperti contoh
-    $info = "
-        Terimakasih <strong>{$nama}</strong>! Pertanyaan ini: 
-        <strong>{$pertanyaan}</strong> akan segera direspon melalui email 
-        <a href='mailto:{$email}'>{$email}</a>
-    ";
+        $nama     = $request->nama;
+        $email     = $request->email;
+        $pertanyaan      = $request->pertanyaan;
+        return redirect()->back()->with('info', "Terimakasih <strong>$nama!</strong> Pertanyaan : <strong>$pertanyaan</strong>
+        akan segera direspon melalui email <strong>$$email</strong>");
 
-    // Redirect ke halaman home dengan pesan flash
-    return redirect()->back()->with('info', $info);
+        // return redirect()->back();
+        
+                // return view('home-question-respon', $data);
+
+
     }
-
 
     /**
      * Display the specified resource.

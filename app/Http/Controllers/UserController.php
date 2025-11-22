@@ -5,107 +5,98 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $dataUser = User::all();
-        return view('admin.user.index', compact('dataUser'));
+        $data['dataUser'] = User::all();
+        return view('admin.user.index', $data);
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
         return view('admin.user.create');
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+    /**
+     * Store a newly created resource in storage.
+     */
+   public function store(Request $request)
+{
+    $request->validate([
+        'name'     => 'required|string|max:100',
+        'email'    => 'required|email|unique:users,email',
+        'password' => 'required|min:8|confirmed',
+    ], [
+        'name.required'     => 'Nama wajib diisi!',
+        'name.string'       => 'Nama harus berupa teks!',
+        'name.max'          => 'Nama maksimal 100 karakter!',
+        'email.required'    => 'Email wajib diisi!',
+        'email.email'       => 'Format email tidak valid!',
+        'email.unique'      => 'Email sudah terdaftar!',
+        'password.required' => 'Password wajib diisi!',
+        'password.min'      => 'Password minimal 8 karakter!',
+        'password.confirmed'=> 'Konfirmasi password tidak cocok!',
+    ]);
 
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
+    $data = $request->only(['name', 'email']);
+    $data['password'] = Hash::make($request->password);
 
-        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
-    }
+    User::create($data);
 
+    return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
+}
+
+
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit($id)
     {
-        $dataUser = User::findOrFail($id);
-        return view('admin.user.edit', compact('dataUser'));
+        $user = User::findOrFail($id);
+        return view('admin.user.edit', compact('user'));
     }
 
-    public function update(Request $request, User $user)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:8|confirmed',
-        ]);
+    /**
+     * Update the specified resource in storage.
+     */
+  public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
 
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
+    $request->validate([
+        'name'  => 'required|string|max:100',
+        'email' => 'required|email|unique:users,email,' . $id,
+        'password' => 'nullable|min:8|confirmed',
+    ]);
 
-        if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-
-        $user->save();
-
-        return redirect()->route('user.index')->with('success', 'Data user berhasil diperbarui!');
+    $data = $request->only(['name', 'email']);
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
     }
 
+    $user->update($data);
+
+    return redirect()->route('user.index')->with('success', 'User berhasil diperbarui!');
+}
+
+
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
 
         return redirect()->route('user.index')->with('success', 'User berhasil dihapus!');
-    }
-
-    // Menampilkan form login
-    public function showLoginForm()
-    {
-        return view('admin.user.login'); 
-    }
-
-    // Login user
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        // Cek user berdasarkan email
-        $user = User::where('email', $request->email)->first();
-
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user); // login user
-            $request->session()->regenerate(); // regenerasi session
-            return redirect()->route('dashboard')->with('success', 'Login berhasil!');
-        }
-
-        return back()->withErrors([
-            'loginError' => 'Email atau password salah ya, coba teliti lagi'
-        ])->onlyInput('email'); // biar email tetap terisi di form
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();  
-        $request->session()->regenerateToken(); 
-
-        return redirect()->route('login.form')->with('success', 'Anda berhasil logout.');
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PelangganController;
 
 Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/user', [UserController::class, 'index'])->name('user.index');
@@ -22,3 +23,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::resource('user', UserController::class);
 Route::get('/dashboard', function () {return view('admin.dashboard'); 
 })->name('dashboard')->middleware('auth');
+
+
+Route::resource('pelanggan', PelangganController::class);
+
+Route::get('/login', [UserController::class, 'showLoginForm'])->name('login.form');
