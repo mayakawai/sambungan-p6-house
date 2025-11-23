@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -14,8 +15,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $data['dataUser'] = User::all();
+        $data['users'] = \App\Models\User::all();
         return view('admin.user.index', $data);
+
     }
 
     /**
@@ -29,74 +31,73 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
-{
-    $request->validate([
-        'name'     => 'required|string|max:100',
-        'email'    => 'required|email|unique:users,email',
-        'password' => 'required|min:8|confirmed',
-    ], [
-        'name.required'     => 'Nama wajib diisi!',
-        'name.string'       => 'Nama harus berupa teks!',
-        'name.max'          => 'Nama maksimal 100 karakter!',
-        'email.required'    => 'Email wajib diisi!',
-        'email.email'       => 'Format email tidak valid!',
-        'email.unique'      => 'Email sudah terdaftar!',
-        'password.required' => 'Password wajib diisi!',
-        'password.min'      => 'Password minimal 8 karakter!',
-        'password.confirmed'=> 'Konfirmasi password tidak cocok!',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+        ]);
 
-    $data = $request->only(['name', 'email']);
-    $data['password'] = Hash::make($request->password);
+        //dd($request->all());
 
-    User::create($data);
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['password'] = Hash::make($request->password);
 
-    return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
-}
+        User::create($data);
 
+        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(string $id)
     {
-        $user = User::findOrFail($id);
-        return view('admin.user.edit', compact('user'));
+        $data['dataUser'] = User::findOrFail($id);
+        return view('admin.user.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-  public function update(Request $request, $id)
-{
-    $user = User::findOrFail($id);
+    public function update(Request $request, string $id)
+    {
+        $user = User::findOrFail($id);
 
-    $request->validate([
-        'name'  => 'required|string|max:100',
-        'email' => 'required|email|unique:users,email,' . $id,
-        'password' => 'nullable|min:8|confirmed',
-    ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:6|confirmed',
+        ]);
 
-    $data = $request->only(['name', 'email']);
-    if ($request->filled('password')) {
-        $data['password'] = Hash::make($request->password);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('user.index')->with('success', 'User berhasil diperbarui!');
     }
-
-    $user->update($data);
-
-    return redirect()->route('user.index')->with('success', 'User berhasil diperbarui!');
-}
-
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $user = User::findOrFail($id);
         $user->delete();
-
         return redirect()->route('user.index')->with('success', 'User berhasil dihapus!');
     }
 }

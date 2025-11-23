@@ -1,38 +1,44 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth; 
 
 class AuthController extends Controller
 {
-    public function showLogin()
+    public function showLoginForm()
     {
-        return view('login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
-        $username = $request->input('username');
-        $password = $request->input('password');
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
-        // Cek kalau username & password tidak kosong
-        if (!empty($username) && !empty($password)) {
-            // Simpan username ke session biar bisa dipakai di halaman lain
-            Session::put('username', $username);
+        // Cek apakah user dengan email tsb ada
+        $user = User::where('email', $request->email)->first();
 
-            // Redirect ke halaman dashboard setelah berhasil login
-            return redirect('/dashboard')->with('success', 'Login Berhasil!');
-        } else {
-            // Kalau salah / kosong tampilkan error
-            return back()->withErrors(['Login Gagal!'])->withInput();
+        if ($user && Hash::check($request->password, $user->password)) {
+            Auth::login($user);
+            return redirect()->route('dashboard')->with('success', 'Berhasil login!');
         }
+
+        // Jika gagal
+        return back()->with('error', 'Email atau password salah.')->withInput();
     }
 
-    public function logout()
-    {
-        Session::forget('username');
-        return redirect('/auth')->with('success', 'Logout Berhasil!');
-    }
+    public function logout(Request $request)
+{
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login')->with('success', 'Anda telah logout.');
+}
+
 }

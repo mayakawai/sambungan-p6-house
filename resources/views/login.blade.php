@@ -1,66 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Form Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Login - Debug</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 50px;
+            font-family: 'Inter', sans-serif;
         }
-        form {
-            border: 1px solid #ccc;
-            padding: 20px;
-            width: 300px;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
-        button {
-            padding: 8px 12px;
-            background: #007bff;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .error { color: red; }
-        .success { color: green; }
     </style>
 </head>
-<body>
-    <h2>Form Login</h2>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
 
-    {{-- Tampilkan pesan error --}}
-    @if ($errors->any())
-        <div class="error">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 mx-4">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Selamat Datang</h1>
+        <p class="text-center text-gray-500 mb-8">Silakan masuk untuk melanjutkan</p>
 
-    {{-- Tampilkan pesan sukses --}}
-    @if (session('success'))
-        <p class="success">{{ session('success') }}</p>
-    @endif
+        <!-- Form sengaja dibuat simpel tanpa kode Laravel untuk tes -->
+        <form action="" method="POST">
+            <div class="mb-5">
+                <label for="username" class="block mb-2 text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3" placeholder="Masukkan username Anda">
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3" placeholder="•••••••••">
+            </div>
+            
+            <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center">
+                Masuk
+            </button>
+        </form>
+    </div>
 
-    {{-- Form login --}}
-    <form action="/auth" method="POST">
-        @csrf
-        <label>Username:</label>
-        <input type="text" name="username" value="{{ old('username') }}">
-
-        <label>Password:</label>
-        <input type="password" name="password">
-
-        <button type="submit">Login</button>
-    </form>
 </body>
 </html>
