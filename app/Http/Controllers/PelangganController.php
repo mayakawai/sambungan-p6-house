@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
+
 use Illuminate\Http\Request;
 
 class PelangganController extends Controller
@@ -10,22 +11,22 @@ class PelangganController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data['dataPelanggan'] = Pelanggan::all();
-        return view('admin.pelanggan.index',$data);
+        // $data['dataPelanggan'] = Pelanggan::all();
 
-       // $filterableColumns = ['gender'];
-       //$searchableColumns = ['first_name'];
+        $filterableColumns = ['gender'];
+
+        $searchableColumns = ['first_name'];
 
 
         // $data['dataPelanggan'] = Pelanggan::paginate(10);
 
-       // $data['dataPelanggan'] = Pelanggan::filter($request, $filterableColumns)
-        //->search($request,$searchableColumns)
-        //->simplePaginate(10)
-        //->withQueryString();
-		//return view('admin.pelanggan.index',$data);
+        $data['dataPelanggan'] = Pelanggan::filter($request, $filterableColumns)
+        ->search($request,$searchableColumns)
+        ->simplePaginate(10)
+        ->withQueryString();
+		return view('admin.pelanggan.index',$data);
     }
 
     /**
