@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ asset('assets-admin/css/style.css') }}">
 </head>
 <body>
-    <h1>Hi, Jane</h1>
+    <h1>Hi, maya</h1>
 
     <script src="{{ asset('assets-admin/js/main.js') }}"></script>
 </body>

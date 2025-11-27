@@ -16,6 +16,8 @@ use App\Http\Controllers\PelangganController;
 
 use App\Http\Controllers\AuthController;
 
+use App\Http\Controllers\ProfileController;
+
 Route::get('/pcr', function () {
     return 'Selamat Datang di Website Kampus PCR!';
 });
@@ -71,3 +73,8 @@ Route::resource('user', App\Http\Controllers\UserController::class);
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.show');
+Route::get('/profile', [ProfileController::class, 'index']);
+// Edit profile
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
