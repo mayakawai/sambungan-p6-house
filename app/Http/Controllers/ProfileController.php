@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+
 class ProfileController extends Controller
 {
     /**
@@ -12,7 +14,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-         return view('profile');
+        //
     }
 
     /**
@@ -43,39 +45,37 @@ class ProfileController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit()
     {
-        return view('profile.edit');
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        $request->validate([
+         $request->validate([
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user = Auth::user();
 
-        // Delete the old profile picture if it exists
         if ($user->profile_picture) {
             Storage::disk('public')->delete($user->profile_picture);
         }
 
-        // Store the new profile picture
-        $path                  = $request->file('profile_picture')->store('profile_pictures', 'public');
+        $path = $request->file('profile_picture')->store('profile_pictures', 'public');
         $user->profile_picture = $path;
         $user->save();
 
         return redirect()->route('profile.edit')->with('success', 'Profile picture updated successfully!');
     }
-
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy()
     {
         $user = Auth::user();
 

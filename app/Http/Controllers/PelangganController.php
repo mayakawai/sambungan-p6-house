@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pelanggan;
+use App\Models\pelanggan;
 
 use Illuminate\Http\Request;
 

@@ -11,7 +11,7 @@ class MahasiswaController extends Controller
      */
     public function index()
     {
-        //
+        return "Menampilkan data haha matakuliah";
     }
 
     /**
@@ -33,11 +33,11 @@ class MahasiswaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $maya)
+    public function show(string $param1)
     {
-        if($maya== 'detail'){
-            return view('halaman-mahasiswa-detail');
-        }else if($maya== 'profil'){
+        if($param1 == 'detail'){
+            return view(' halaman-mahasiswa-detail');
+        }else if($param1 == 'profil'){
             return view('halaman-mahasiswa-profil');
         }
     }
